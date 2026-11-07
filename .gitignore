@@ -1,0 +1,12 @@
+/target
+/crates/*/target
+/crates/boulevard-worker/build
+/node_modules
+/.wrangler
+/crates/boulevard-worker/.wrangler
+.dev.vars
+.dev.vars.*
+*.log
+.DS_Store
+/apps/ios/Generated
+/apps/android/app/src/main/java/com/boulevard/core/generated

@@ -1,0 +1,45 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "boulevard-api",
+  "main": "build/worker/shim.mjs",
+  "compatibility_date": "2026-11-07",
+  "workers_dev": true,
+  "build": {
+    "command": "cargo install -q worker-build@^0.8 && worker-build --release"
+  },
+  "observability": {
+    "enabled": true,
+    "traces": { "enabled": true }
+  },
+  "vars": {
+    "APP_ENV": "production",
+    // When "true", /v1/auth/start also returns the code in the response. Never in production.
+    "DEV_RETURN_OTP": "false",
+    // Serve the eight scripted stand-in students on the deck until the campus is live.
+    "STANDINS_ENABLED": "true",
+    // The Boulevard+ preview unlock from the prototype (no card charged). Off once billing exists.
+    "PLUS_PREVIEW_UNLOCK": "true",
+    // Comma-separated @smu.edu addresses that get the moderation endpoints.
+    "ADMIN_EMAILS": "",
+    // "log" writes codes to the Worker log; "resend" sends through Resend with RESEND_API_KEY.
+    "EMAIL_PROVIDER": "log",
+    "EMAIL_FROM": "Boulevard <onboarding@resend.dev>",
+    // Browser origins allowed to call the API. Native apps do not need CORS.
+    "CORS_ORIGINS": "*"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "boulevard",
+      "database_id": "b60ed2eb-6346-44ce-b804-e294effa15fe",
+      "migrations_dir": "../../migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "CHAT_ROOM", "class_name": "ChatRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ChatRoom"] }]
+  // Photos need R2, which must be enabled once in the Cloudflare dashboard for this account.
+  // Then: cf r2 buckets create --name boulevard-photos, and uncomment:
+  // ,"r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "boulevard-photos" }]
+}
