@@ -1,15 +1,17 @@
 {
-  "name": "Boulevard-an-SMU-dating-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "boulevard",
+  "private": true,
+  "description": "Boulevard, a verified SMU dating app. Rust on Cloudflare Workers; wrangler is pinned here for local dev and deploys.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "wrangler dev --config crates/boulevard-worker/wrangler.jsonc",
+    "deploy": "wrangler deploy --config crates/boulevard-worker/wrangler.jsonc",
+    "migrate:local": "wrangler d1 migrations apply boulevard --local --config crates/boulevard-worker/wrangler.jsonc",
+    "migrate:remote": "wrangler d1 migrations apply boulevard --remote --config crates/boulevard-worker/wrangler.jsonc",
+    "tail": "wrangler tail --config crates/boulevard-worker/wrangler.jsonc",
+    "smoke": "bash scripts/smoke.sh"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "wrangler": "^4.158.0"
-  }
+  },
+  "packageManager": "pnpm@12.5.1"
 }

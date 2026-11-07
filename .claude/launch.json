@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "boulevard-api",
+      "runtimeExecutable": "node_modules/.bin/wrangler",
+      "runtimeArgs": ["dev", "--config", "crates/boulevard-worker/wrangler.jsonc", "--port", "8787", "--local"],
+      "port": 8787
+    }
+  ]
+}

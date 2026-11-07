@@ -1,0 +1,46 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  core:
+    name: core tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test -p boulevard-core
+      - run: cargo build -p boulevard-core --features ffi
+      - run: cargo check -p boulevard-worker --target wasm32-unknown-unknown
+
+  smoke:
+    name: worker smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: cargo install worker-build --locked
+      - run: pnpm install --frozen-lockfile
+      - run: cp crates/boulevard-worker/.dev.vars.example crates/boulevard-worker/.dev.vars
+      - run: pnpm migrate:local
+      - name: start wrangler dev
+        run: |
+          pnpm dev --port 8787 > wrangler.log 2>&1 &
+          for i in $(seq 1 120); do curl -sf http://localhost:8787/v1/health >/dev/null && break; sleep 2; done
+          curl -sf http://localhost:8787/v1/health
+      - run: bash scripts/smoke.sh
+      - if: failure()
+        run: tail -n 200 wrangler.log

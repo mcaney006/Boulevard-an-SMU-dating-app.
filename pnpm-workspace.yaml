@@ -1,8 +1,5 @@
-packages:
-  - "."
+# pnpm 12 keeps build-script approvals here. workerd ships its binary as a
+# plain optional dependency; esbuild's postinstall only validates the binary.
 allowBuilds:
-  esbuild: set this to true or false
-  workerd: set this to true or false
-onlyBuiltDependencies:
-  - esbuild
-  - workerd
+  esbuild: true
+  workerd: true
