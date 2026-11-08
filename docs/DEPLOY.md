@@ -17,6 +17,16 @@ pnpm deploy                         # builds the wasm (worker-build) and uploads
 curl https://boulevard-api.boulevard.workers.dev/v1/health
 ```
 
+## Continuous deploys (Workers Builds)
+
+The `boulevard-api` Worker has a Workers Builds configuration attached to this GitHub repository
+(`cf builds workers get <script tag>` shows it). Every push to `main` runs, in Cloudflare's build
+environment: install the wasm target, `wrangler d1 migrations apply boulevard --remote`, then
+`wrangler deploy`. With previews enabled, pushes to other branches run `wrangler versions upload`
+instead, which proves the Rust build without touching production. Build logs live in the dashboard
+under Workers & Pages → boulevard-api → Builds. Manual `pnpm deploy` still works and uses the same
+config.
+
 `wrangler` uses `CLOUDFLARE_API_TOKEN` from the environment, so this works in a shell that ran
 `cfenv`, and in CI with the token as a secret.
 
