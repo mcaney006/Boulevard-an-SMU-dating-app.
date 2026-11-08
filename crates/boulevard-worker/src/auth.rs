@@ -43,14 +43,16 @@ pub async fn start(req: &mut Request, app: &App) -> ApiResult {
     let db = app.db()?;
     let now = app.now();
 
-    let (ok_email, retry) = db.rate_limit(&format!("otp:email:{email}"), HOUR_MS, 5, now).await?;
+    let per_email = app.var("OTP_PER_EMAIL_HOURLY").and_then(|v| v.parse().ok()).unwrap_or(5);
+    let per_ip = app.var("OTP_PER_IP_HOURLY").and_then(|v| v.parse().ok()).unwrap_or(20);
+    let (ok_email, retry) = db.rate_limit(&format!("otp:email:{email}"), HOUR_MS, per_email, now).await?;
     if !ok_email {
         return Err(ApiError::RateLimited {
             message: "Too many codes for that address. Try again later.".into(),
             retry_after_s: retry,
         });
     }
-    let (ok_ip, retry) = db.rate_limit(&format!("otp:ip:{ip}"), HOUR_MS, 20, now).await?;
+    let (ok_ip, retry) = db.rate_limit(&format!("otp:ip:{ip}"), HOUR_MS, per_ip, now).await?;
     if !ok_ip {
         return Err(ApiError::RateLimited {
             message: "Too many requests. Try again later.".into(),

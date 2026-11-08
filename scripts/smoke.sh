@@ -129,8 +129,11 @@ U=$(req GET "/v1/admin/users/$MUID" "$T1"); check "admin user view has events" '
 PH=$(curl -s -X POST "$BASE/v1/me/photos" -H "authorization: Bearer $T1" --data-binary 'notanimage'); check "photos report disabled without R2" '[ "$(echo "$PH" | jq -r .error.code)" = photos_disabled ]' "$PH"
 DEL=$(req DELETE /v1/me "$T2");    check "second account deleted" '[ "$(echo "$DEL" | jq -r .ok)" = true ]' "$DEL"
 X=$(req GET /v1/me "$T2");         check "deleted account's session is dead" '[ "$(echo "$X" | jq -r .error.code)" = unauthorized ]' "$X"
-LO=$(req POST /v1/auth/logout "$T1"); check "logout" '[ "$(echo "$LO" | jq -r .ok)" = true ]' "$LO"
-X=$(req GET /v1/me "$T1");         check "token revoked after logout" '[ "$(echo "$X" | jq -r .error.code)" = unauthorized ]' "$X"
+T1B=$(signin peruna@smu.edu);     check "second session for peruna" '[ -n "$T1B" ]' "$T1B"
+LO=$(req POST /v1/auth/logout "$T1B"); check "logout" '[ "$(echo "$LO" | jq -r .ok)" = true ]' "$LO"
+X=$(req GET /v1/me "$T1B");        check "token revoked after logout" '[ "$(echo "$X" | jq -r .error.code)" = unauthorized ]' "$X"
+ME=$(req GET /v1/me "$T1");        check "other session still valid" '[ "$(echo "$ME" | jq -r .user.email)" = peruna@smu.edu ]' "$ME"
+DEL=$(req DELETE /v1/me "$T1");    check "first account deleted (local state clean for a re-run)" '[ "$(echo "$DEL" | jq -r .ok)" = true ]' "$DEL"
 
 echo; echo "passed: $pass  failed: $fail"
 [ "$fail" -eq 0 ]

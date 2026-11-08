@@ -84,9 +84,10 @@ CREATE TABLE matches (
   closed_by            TEXT,
   last_message_at      INTEGER,
   last_message_preview TEXT,
-  last_message_from    TEXT,
-  UNIQUE (user_a, user_b)
+  last_message_from    TEXT
 );
+-- One open match per pair; a closed match may be followed by a new one.
+CREATE UNIQUE INDEX matches_open_pair_idx ON matches(user_a, user_b) WHERE closed_at IS NULL;
 CREATE INDEX matches_a_idx ON matches(user_a, closed_at);
 CREATE INDEX matches_b_idx ON matches(user_b, closed_at);
 

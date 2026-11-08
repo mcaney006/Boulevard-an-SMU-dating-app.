@@ -5,7 +5,8 @@
   "compatibility_date": "2026-11-07",
   "workers_dev": true,
   "build": {
-    "command": "cargo install -q worker-build@^0.8 && worker-build --release"
+    // Runs from the repo root (pnpm scripts, CI) or from this directory.
+    "command": "command -v worker-build >/dev/null || cargo install -q worker-build@^0.8; cd crates/boulevard-worker 2>/dev/null; worker-build --release"
   },
   "observability": {
     "enabled": true,

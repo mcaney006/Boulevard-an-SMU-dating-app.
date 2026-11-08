@@ -3,8 +3,16 @@
   "configurations": [
     {
       "name": "boulevard-api",
-      "runtimeExecutable": "node_modules/.bin/wrangler",
-      "runtimeArgs": ["dev", "--config", "crates/boulevard-worker/wrangler.jsonc", "--port", "8787", "--local"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "scripts/wrangler.sh",
+        "dev",
+        "--config",
+        "crates/boulevard-worker/wrangler.jsonc",
+        "--port",
+        "8787",
+        "--local"
+      ],
       "port": 8787
     }
   ]
