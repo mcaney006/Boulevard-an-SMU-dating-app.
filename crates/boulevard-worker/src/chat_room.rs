@@ -299,7 +299,7 @@ impl DurableObject for ChatRoom {
                 server.serialize_attachment(Attachment { user_id: user.clone() })?;
                 let members = self.members()?;
                 let _ = server.send_with_str(
-                    &serde_json::json!({ "type": "hello", "user_id": user, "members": members }).to_string(),
+                    serde_json::json!({ "type": "hello", "user_id": user, "members": members }).to_string(),
                 );
                 self.broadcast(&serde_json::json!({ "type": "presence", "user_id": user, "online": true }), Some(&user));
                 Response::from_websocket(pair.client)
@@ -314,7 +314,7 @@ impl DurableObject for ChatRoom {
             }
             (Method::Post, "/close") => {
                 for ws in self.state.get_websockets() {
-                    let _ = ws.send_with_str(&serde_json::json!({ "type": "closed" }).to_string());
+                    let _ = ws.send_with_str(serde_json::json!({ "type": "closed" }).to_string());
                     let _ = ws.close(Some(1000), Some("match closed"));
                 }
                 json_response(&serde_json::json!({ "ok": true }), 200)
@@ -340,21 +340,21 @@ impl DurableObject for ChatRoom {
         let text = match message {
             WebSocketIncomingMessage::String(s) => s,
             WebSocketIncomingMessage::Binary(_) => {
-                let _ = ws.send_with_str(&serde_json::json!({ "type": "error", "message": "Text frames only." }).to_string());
+                let _ = ws.send_with_str(serde_json::json!({ "type": "error", "message": "Text frames only." }).to_string());
                 return Ok(());
             }
         };
         let event: ClientEvent = match serde_json::from_str(&text) {
             Ok(e) => e,
             Err(_) => {
-                let _ = ws.send_with_str(&serde_json::json!({ "type": "error", "message": "Unknown event." }).to_string());
+                let _ = ws.send_with_str(serde_json::json!({ "type": "error", "message": "Unknown event." }).to_string());
                 return Ok(());
             }
         };
         match event {
             ClientEvent::Message { body } => {
                 if let Err(m) = self.post_message(&att.user_id, &body).await? {
-                    let _ = ws.send_with_str(&serde_json::json!({ "type": "error", "message": m }).to_string());
+                    let _ = ws.send_with_str(serde_json::json!({ "type": "error", "message": m }).to_string());
                 }
             }
             ClientEvent::Typing => {
@@ -368,7 +368,7 @@ impl DurableObject for ChatRoom {
                 self.broadcast(&serde_json::json!({ "type": "read", "user_id": att.user_id, "last_read_id": last_read_id }), Some(&att.user_id));
             }
             ClientEvent::Ping => {
-                let _ = ws.send_with_str(&serde_json::json!({ "type": "pong", "at": now_ms() }).to_string());
+                let _ = ws.send_with_str(serde_json::json!({ "type": "pong", "at": now_ms() }).to_string());
             }
         }
         Ok(())

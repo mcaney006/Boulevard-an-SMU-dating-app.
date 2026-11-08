@@ -84,11 +84,11 @@ pub const GREEKS: &[&str] = &[
 ];
 
 pub fn is_major(s: &str) -> bool {
-    MAJORS.iter().any(|m| *m == s)
+    MAJORS.contains(&s)
 }
 
 pub fn is_greek(s: &str) -> bool {
-    s.is_empty() || GREEKS.iter().any(|g| *g == s)
+    s.is_empty() || GREEKS.contains(&s)
 }
 
 /// Normalise the house field: `Independent` and whitespace become empty.

@@ -31,6 +31,7 @@ pub fn is_standin_id(id: &str) -> bool {
     id.starts_with(STANDIN_PREFIX)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn s(
     id: &str,
     name: &str,

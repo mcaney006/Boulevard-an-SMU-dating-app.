@@ -114,12 +114,10 @@ impl Looking {
 
     /// Whether a member with this preference wants to see someone of `gender`.
     pub fn accepts(self, gender: Gender) -> bool {
-        match (self, gender) {
-            (Looking::Everyone, _) => true,
-            (Looking::Women, Gender::Woman) => true,
-            (Looking::Men, Gender::Man) => true,
-            _ => false,
-        }
+        matches!(
+            (self, gender),
+            (Looking::Everyone, _) | (Looking::Women, Gender::Woman) | (Looking::Men, Gender::Man)
+        )
     }
 }
 

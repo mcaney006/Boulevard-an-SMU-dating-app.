@@ -269,7 +269,7 @@ impl Current {
         self.user.plus_active != 0
     }
     pub fn is_admin(&self, app: &App) -> bool {
-        self.user.is_admin != 0 || app.admin_emails().iter().any(|e| *e == self.user.email)
+        self.user.is_admin != 0 || app.admin_emails().contains(&self.user.email)
     }
 }
 
@@ -328,7 +328,7 @@ pub async fn require_admin(req: &Request, app: &App) -> ApiResult<Current> {
 }
 
 pub fn session_user(app: &App, user: &UserRow, profile_complete: bool) -> SessionUser {
-    let admin = user.is_admin != 0 || app.admin_emails().iter().any(|e| *e == user.email);
+    let admin = user.is_admin != 0 || app.admin_emails().contains(&user.email);
     SessionUser {
         id: user.id.clone(),
         email: user.email.clone(),
