@@ -1,0 +1,17 @@
+{
+  "name": "boulevard",
+  "private": true,
+  "description": "Boulevard, a verified SMU dating app. Rust on Cloudflare Workers; wrangler is pinned here for local dev and deploys.",
+  "scripts": {
+    "dev": "bash scripts/wrangler.sh dev --config crates/boulevard-worker/wrangler.jsonc --port 8787 --local",
+    "deploy": "bash scripts/wrangler.sh deploy --config crates/boulevard-worker/wrangler.jsonc",
+    "migrate:local": "bash scripts/wrangler.sh d1 migrations apply boulevard --local --config crates/boulevard-worker/wrangler.jsonc",
+    "migrate:remote": "bash scripts/wrangler.sh d1 migrations apply boulevard --remote --config crates/boulevard-worker/wrangler.jsonc",
+    "tail": "bash scripts/wrangler.sh tail --config crates/boulevard-worker/wrangler.jsonc",
+    "smoke": "bash scripts/smoke.sh"
+  },
+  "devDependencies": {
+    "wrangler": "^4.158.0"
+  },
+  "packageManager": "pnpm@12.5.1"
+}

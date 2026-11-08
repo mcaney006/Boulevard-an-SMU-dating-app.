@@ -1,0 +1,11 @@
+# Copy to .dev.vars for `pnpm dev`. Never commit .dev.vars.
+APP_ENV=dev
+DEV_RETURN_OTP=true
+STANDINS_ENABLED=true
+PLUS_PREVIEW_UNLOCK=true
+ADMIN_EMAILS=you@smu.edu
+EMAIL_PROVIDER=log
+# Loose code limits so the smoke test can run repeatedly (production defaults: 5 and 20 per hour).
+OTP_PER_EMAIL_HOURLY=100
+OTP_PER_IP_HOURLY=1000
+# RESEND_API_KEY=re_...
