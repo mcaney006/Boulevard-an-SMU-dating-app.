@@ -65,6 +65,10 @@ pnpm smoke                     # in another shell: 50 checks across the whole fl
 With `DEV_RETURN_OTP=true` the sign-in code comes back in the `/v1/auth/start` response, so
 nothing needs an inbox locally.
 
+The pnpm scripts run wrangler through `scripts/wrangler.sh`, which picks a real Node.js. On a
+machine where `node` on PATH is Bun, wrangler's local proxy cannot reach the Worker and every
+request answers 503; the wrapper sidesteps that.
+
 ## Tests
 
 ```bash
