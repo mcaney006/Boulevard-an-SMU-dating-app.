@@ -1,0 +1,31 @@
+[package]
+name = "boulevard-core"
+description = "Boulevard domain core: profile types, the published score, verification rules, and the stand-in deck. Shared by the Cloudflare Worker and the mobile apps (UniFFI)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+name = "boulevard_core"
+
+[features]
+default = []
+# Expose the domain API to Swift and Kotlin through UniFFI. Off for the wasm Worker build.
+ffi = ["dep:uniffi"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+chrono-tz = { workspace = true }
+uniffi = { version = "0.32", optional = true, features = ["cli"] }
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+required-features = ["ffi"]
+
+[dev-dependencies]
+serde_json = { workspace = true }
